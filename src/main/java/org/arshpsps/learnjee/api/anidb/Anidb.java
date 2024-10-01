@@ -55,17 +55,6 @@ public class Anidb extends HttpServlet {
             final var reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             reader.lines().forEach(resp::append);
 
-//            Scanner scanner = new Scanner(url.openStream());
-//            Scanner scanner = new Scanner(conn.getInputStream());
-//
-//            while (scanner.hasNext()) {
-//                resp.append(scanner.nextLine());
-//            }
-//            out.println("maybe trynna print?");
-//            scanner.close();
-
-//            out.println(resp.toString());
-
             ObjectMapper mapper = new ObjectMapper();
             JsonNode animeNode = mapper.readTree(resp.toString());
             out.println(animeNode);
