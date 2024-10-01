@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -77,8 +80,10 @@ public class anilist {
     public JsonNode SearchAnimeWithTitle(String animeTitle) {
         final int pageSize = 10;
 
+        // TODO: query to .gql or .graphql
+        // TODO: "variables" to jackson, if possible
         String query = "{\n" +
-                "\"query\": \"query($id: Int, $page: Int, $perPage: Int, $search: String) {Page(page: $page, perPage: $perPage) {pageInfo {hasNextPage} media(id: $id, search: $search, type: ANIME) {id title{romaji english native}}}}\",\n" +
+                "\"query\": \"query($id: Int, $page: Int, $perPage: Int, $search: String) {Page(page: $page, perPage: $perPage) {pageInfo {hasNextPage} media(id: $id, search: $search, type: ANIME) {id title{romaji english native} averageScore studios {nodes {name id}} coverImage {extraLarge} }}}\",\n" +
                 "  \"variables\": {\n" +
                 "    \"search\": \"" +
                 animeTitle +
