@@ -14,11 +14,16 @@ public class Anidb extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
+        String searchKeyword = "frieren";
+        if (request.getParameter("anime") != null && !request.getParameter("anime").isEmpty()) {
+            searchKeyword = request.getParameter("anime");
+        }
+
         PrintWriter out = response.getWriter();
 
         JsonNode data = null;
         try {
-            data = new anilist().SearchAnimeWithTitle("Fate");
+            data = new anilist().SearchAnimeWithTitle(searchKeyword);
         } catch (Exception e) {
             out.println(e.getMessage());
         }
