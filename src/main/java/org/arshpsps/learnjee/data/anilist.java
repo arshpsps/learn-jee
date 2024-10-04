@@ -77,26 +77,7 @@ public class anilist {
         }
     }
 
-    public JsonNode SearchAnimeWithTitle(String animeTitle) {
-        final int pageSize = 10;
-
-        // TODO: query to .gql or .graphql
-        // TODO: "variables" to jackson, if possible
-        String query = "{\n" +
-                "\"query\": \"query($id: Int, $page: Int, $perPage: Int, $search: String) {Page(page: $page, perPage: $perPage) {pageInfo {hasNextPage} media(id: $id, search: $search, type: ANIME) {id title{romaji english native} averageScore studios {nodes {name id}} coverImage {extraLarge} }}}\",\n" +
-                "  \"variables\": {\n" +
-                "    \"search\": \"" +
-                animeTitle +
-                "\",\n" +
-                "    \"page\": 1" +
-                ",\n" +
-                "    \"perPage\": " +
-                pageSize +
-                "\n" +
-                "  }\n" +
-                "}";
-
-
+    private JsonNode queryAndMap(String query) {
         System.out.println(query);
         final String response = request(query);
 
@@ -108,6 +89,27 @@ public class anilist {
             System.out.println("Error parsing JSON");
         }
         return animeNode;
+    }
+
+    public JsonNode SearchAnimeWithTitle(String animeTitle) {
+        final int pageSize = 10;
+
+        // TODO: query to .gql or .graphql
+        // TODO: "variables" to jackson, if possible
+        String query = "{\n" + "\"query\": \"query($id: Int, $page: Int, $perPage: Int, $search: String) {Page(page: $page, perPage: $perPage) {pageInfo {hasNextPage} media(id: $id, search: $search, type: ANIME) {id title{romaji english native} averageScore studios {nodes {name id}} coverImage {extraLarge} }}}\",\n" + "  \"variables\": {\n" + "    \"search\": \"" + animeTitle + "\",\n" + "    \"page\": 1" + ",\n" + "    \"perPage\": " + pageSize + "\n" + "  }\n" + "}";
+
+        return queryAndMap(query);
+    }
+
+    public JsonNode SearchAnimeWithId(int animeId) {
+        String rawQuery = "query Query($mediaId: Int, $perPage: Int) {\\n  Media(id: $mediaId) {\\n    title {\\n      english\\n      native\\n      romaji\\n    }\\n    averageScore\\n    characters(perPage: $perPage) {\\n      pageInfo {\\n        perPage\\n        hasNextPage\\n        currentPage\\n      }\\n      nodes {\\n        image {\\n          large\\n        }\\n        name {\\n          native\\n          full\\n        }\\n      }\\n      edges {\\n        voiceActors {\\n          name {\\n            full\\n            native\\n          }\\n        }\\n      }\\n    }\\n    coverImage {\\n      extraLarge\\n    }\\n    description\\n    episodes\\n    genres\\n    id\\n    relations {\\n      pageInfo {\\n        currentPage\\n        perPage\\n        hasNextPage\\n      }\\n      nodes {\\n        title {\\n          english\\n          native\\n          romaji\\n        }\\n        id\\n      }\\n    }\\n    trailer {\\n      site\\n    }\\n    studios {\\n      pageInfo {\\n        currentPage\\n        hasNextPage\\n        perPage\\n      }\\n      nodes {\\n        name\\n        isAnimationStudio\\n      }\\n    }\\n    status\\n  }\\n}";
+        String rawVars = "{\n" +
+                "  \"mediaId\": " + animeId + ",\n" +
+                "  \"perPage\": 10\n" +
+                "}";
+        String query = "{ \"query\": \"" + rawQuery + "\",\n" + "  \"variables\": " + rawVars + "\n}";
+
+        return queryAndMap(query);
     }
 
 }
